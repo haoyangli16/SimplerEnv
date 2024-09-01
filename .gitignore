@@ -27,3 +27,6 @@ dist/
 .vscode
 
 imgui.ini
+
+
+ManiSkill2_real2sim/mani_skill2_real2sim/examples/demo_grasp_motion_plan.py
