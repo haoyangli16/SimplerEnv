@@ -316,12 +316,12 @@ This file has been manually updated on <03/12/2019>.
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <box size="0.04 0.02 0.08 " />  <!--0.6 0.48 0.28-->  <!--0.5 0.4 0.233-->
-      </geometry>
       <!-- <geometry>
-        <mesh filename="coarse_meshes/link_finger_tip_boxified.obj"/>
+        <box size="0.04 0.02 0.08 " /> 
       </geometry> -->
+      <geometry>
+        <mesh filename="coarse_meshes/link_finger_tip_boxified.obj"/>
+      </geometry>
     </collision>
   </link>
   <link name="link_finger_nail_right">
@@ -387,12 +387,12 @@ This file has been manually updated on <03/12/2019>.
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <box size="0.04 0.02 0.08 " />  <!--0.6 0.48 0.28-->  <!--0.5 0.4 0.233-->
-      </geometry>
       <!-- <geometry>
-        <mesh filename="coarse_meshes/link_finger_tip_boxified.obj"/>
+        <box size="0.04 0.02 0.08 " />  
       </geometry> -->
+      <geometry>
+        <mesh filename="coarse_meshes/link_finger_tip_boxified.obj"/>
+      </geometry>
     </collision>
   </link>
   <link name="link_finger_nail_left">

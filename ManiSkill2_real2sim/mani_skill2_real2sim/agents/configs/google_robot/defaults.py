@@ -6,7 +6,9 @@ from mani_skill2_real2sim.sensors.camera import CameraConfig
 
 
 class GoogleRobotDefaultConfig:
-    def __init__(self, mobile_base=False, finger_friction=2.0, base_arm_drive_mode="force") -> None:
+    def __init__(
+        self, mobile_base=False, finger_friction=2.0, base_arm_drive_mode="force"
+    ) -> None:
         if mobile_base:
             self.urdf_path = "{PACKAGE_ASSET_DIR}/descriptions/googlerobot_description/google_robot_meta_sim_fix_fingertip.urdf"
         else:
@@ -18,10 +20,14 @@ class GoogleRobotDefaultConfig:
         self.urdf_config = dict(
             _materials=dict(
                 finger_mat=dict(
-                    static_friction=finger_friction, dynamic_friction=finger_friction, restitution=0.0
+                    static_friction=finger_friction,
+                    dynamic_friction=finger_friction,
+                    restitution=0.0,
                 ),
                 finger_tip_mat=dict(
-                    static_friction=finger_friction, dynamic_friction=finger_friction, restitution=0.0
+                    static_friction=finger_friction,
+                    dynamic_friction=finger_friction,
+                    restitution=0.0,
                 ),
                 finger_nail_mat=dict(
                     static_friction=0.1, dynamic_friction=0.1, restitution=0.0
@@ -134,8 +140,8 @@ class GoogleRobotDefaultConfig:
         self.gripper_stiffness = 200
         self.gripper_damping = 8
         self.gripper_force_limit = 60
-        self.gripper_vel_limit = 1.0
-        self.gripper_acc_limit = 7.0
+        self.gripper_vel_limit = 1.0  # 1.0
+        self.gripper_acc_limit = 7.0  # 7.0
         self.gripper_jerk_limit = 50.0
 
         self.ee_link_name = "link_gripper_tcp"  # end-effector link name
@@ -212,17 +218,19 @@ class GoogleRobotDefaultConfig:
             interpolate=True,
             **arm_common_kwargs,
         )
-        arm_pd_ee_target_delta_pose_align_interpolate_by_planner = PDEEPoseControllerConfig(
-            *arm_common_args,
-            frame="ee_align",
-            use_target=True,
-            interpolate=True,
-            delta_target_from_last_drive_target=True,
-            interpolate_by_planner=True,
-            interpolate_planner_vlim=self.arm_vel_limit,
-            interpolate_planner_alim=self.arm_acc_limit,
-            interpolate_planner_jerklim=self.arm_jerk_limit,
-            **arm_common_kwargs,
+        arm_pd_ee_target_delta_pose_align_interpolate_by_planner = (
+            PDEEPoseControllerConfig(
+                *arm_common_args,
+                frame="ee_align",
+                use_target=True,
+                interpolate=True,
+                delta_target_from_last_drive_target=True,
+                interpolate_by_planner=True,
+                interpolate_planner_vlim=self.arm_vel_limit,
+                interpolate_planner_alim=self.arm_acc_limit,
+                interpolate_planner_jerklim=self.arm_jerk_limit,
+                **arm_common_kwargs,
+            )
         )
         _C["arm"] = dict(
             arm_pd_ee_delta_pose=arm_pd_ee_delta_pose,
@@ -259,19 +267,21 @@ class GoogleRobotDefaultConfig:
             normalize_action=True,
             drive_mode="force",
         )
-        gripper_pd_joint_target_pos_interpolate_by_planner = PDJointPosMimicControllerConfig(
-            *gripper_common_args,
-            use_target=True,
-            clip_target=True,
-            clip_target_thres=0.01,
-            normalize_action=True,
-            drive_mode="force",
-            interpolate=True,
-            interpolate_by_planner=True,
-            interpolate_planner_exec_set_target_vel=True,
-            interpolate_planner_vlim=self.gripper_vel_limit,
-            interpolate_planner_alim=self.gripper_acc_limit,
-            interpolate_planner_jerklim=self.gripper_jerk_limit,
+        gripper_pd_joint_target_pos_interpolate_by_planner = (
+            PDJointPosMimicControllerConfig(
+                *gripper_common_args,
+                use_target=True,
+                clip_target=True,
+                clip_target_thres=0.01,
+                normalize_action=True,
+                drive_mode="force",
+                interpolate=True,
+                interpolate_by_planner=True,
+                interpolate_planner_exec_set_target_vel=True,
+                interpolate_planner_vlim=self.gripper_vel_limit,
+                interpolate_planner_alim=self.gripper_acc_limit,
+                interpolate_planner_jerklim=self.gripper_jerk_limit,
+            )
         )
         gripper_pd_joint_delta_pos = PDJointPosMimicControllerConfig(
             *gripper_common_args,
@@ -288,22 +298,24 @@ class GoogleRobotDefaultConfig:
             normalize_action=True,
             drive_mode="force",
         )
-        gripper_pd_joint_target_delta_pos_interpolate_by_planner = PDJointPosMimicControllerConfig(
-            *gripper_common_args,
-            use_delta=True,
-            use_target=True,
-            clip_target=True,
-            clip_target_thres=0.01,
-            normalize_action=True,
-            drive_mode="force",
-            interpolate=True,
-            interpolate_by_planner=True,
-            interpolate_planner_exec_set_target_vel=True,
-            delta_target_from_last_drive_target=True,
-            small_action_repeat_last_target=True,
-            interpolate_planner_vlim=self.gripper_vel_limit,
-            interpolate_planner_alim=self.gripper_acc_limit,
-            interpolate_planner_jerklim=self.gripper_jerk_limit,
+        gripper_pd_joint_target_delta_pos_interpolate_by_planner = (
+            PDJointPosMimicControllerConfig(
+                *gripper_common_args,
+                use_delta=True,
+                use_target=True,
+                clip_target=True,
+                clip_target_thres=0.01,
+                normalize_action=True,
+                drive_mode="force",
+                interpolate=True,
+                interpolate_by_planner=True,
+                interpolate_planner_exec_set_target_vel=True,
+                delta_target_from_last_drive_target=True,
+                small_action_repeat_last_target=True,
+                interpolate_planner_vlim=self.gripper_vel_limit,
+                interpolate_planner_alim=self.gripper_acc_limit,
+                interpolate_planner_jerklim=self.gripper_jerk_limit,
+            )
         )
         _C["gripper"] = dict(
             gripper_pd_joint_pos=gripper_pd_joint_pos,
@@ -366,23 +378,23 @@ class GoogleRobotManualTunedIntrinsicConfig(GoogleRobotDefaultConfig):
 class GoogleRobotStaticBaseConfig(GoogleRobotDefaultConfig):
     def __init__(self, **kwargs) -> None:
         super().__init__(mobile_base=False, **kwargs)
-        
-        
+
+
 class GoogleRobotStaticBaseHalfFingerFrictionConfig(GoogleRobotStaticBaseConfig):
     def __init__(self, **kwargs) -> None:
         super().__init__(finger_friction=1.0, **kwargs)
-        
+
 
 class GoogleRobotStaticBaseQuarterFingerFrictionConfig(GoogleRobotStaticBaseConfig):
     def __init__(self, **kwargs) -> None:
         super().__init__(finger_friction=0.5, **kwargs)
-        
-        
+
+
 class GoogleRobotStaticBaseOneEighthFingerFrictionConfig(GoogleRobotStaticBaseConfig):
     def __init__(self, **kwargs) -> None:
         super().__init__(finger_friction=0.25, **kwargs)
-        
-        
+
+
 class GoogleRobotStaticBaseTwiceFingerFrictionConfig(GoogleRobotStaticBaseConfig):
     def __init__(self, **kwargs) -> None:
         super().__init__(finger_friction=4.0, **kwargs)

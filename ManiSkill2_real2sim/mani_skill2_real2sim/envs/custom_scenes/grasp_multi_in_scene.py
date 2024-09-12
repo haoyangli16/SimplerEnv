@@ -267,7 +267,9 @@ class GraspMultipleCustomInSceneEnv(
 ):
     def _load_models(self):
         for model_id, model_scale in zip(self.model_ids, self.model_scales):
-            density = self.model_db[model_id].get("density", 1000)
+            # NOTE: it is a hard code now, to lower the density of objects
+            density = 0.01 * self.model_db[model_id].get("density", 1)
+            print(model_id, model_scale, density)
             obj = self._build_actor_helper(
                 model_id,
                 self._scene,
@@ -412,6 +414,7 @@ class GraspMultipleRandomObjectsInSceneEnv(GraspMultipleCustomOrientationInScene
             "sponge",
             "bridge_spoon_generated_modified",
             "bridge_carrot_generated_modified",
+            "bridge_spoon_generated_modified",
             "green_cube_3cm",
             "yellow_cube_3cm",
             "eggplant",
@@ -440,6 +443,7 @@ class GraspMultipleSameObjectsInSceneEnv(GraspMultipleCustomOrientationInSceneEn
     def __init__(self, num_objects=8, model_id="opened_coke_can", **kwargs):
         self.fixed_model_id = model_id
         super().__init__(num_objects=num_objects, **kwargs)
+        # self._scene.set_ambient_light([1.5, 1.5, 1.5])
 
     def reset(self, seed=None, options=None):
         if options is None:
@@ -489,4 +493,142 @@ class GraspMultipleSameObjectsInSceneEnv(GraspMultipleCustomOrientationInSceneEn
             task_description = f"pick the {obj_name}"
         else:
             task_description = f"pick {self.num_objects} {obj_name}s"
+        return task_description
+
+
+@register_env("GraspMultipleDifferentObjectsInScene-v0", max_episode_steps=120)
+class GraspMultipleDifferentObjectsInSceneEnv(GraspMultipleCustomOrientationInSceneEnv):
+    def __init__(
+        self,
+        model_ids=[
+            "eggplant",
+            "bridge_spoon_generated_modified",
+            "apple",
+            "bridge_carrot_generated_modified",
+        ],
+        **kwargs,
+    ):
+        self.custom_model_ids = model_ids
+        super().__init__(num_objects=len(model_ids) if model_ids else 3, **kwargs)
+
+    def reset(self, seed=None, options=None):
+        if options is None:
+            options = dict()
+        options = options.copy()
+
+        # Ensure the episode RNG is set before using it
+        self.set_episode_rng(seed)
+
+        # Use the provided model_ids or the custom_model_ids set during initialization
+        model_ids = options.get("model_ids", self.custom_model_ids)
+        if model_ids is None:
+            raise ValueError(
+                "model_ids must be provided either during initialization or in reset options"
+            )
+
+        options["model_ids"] = model_ids
+        self.num_objects = len(model_ids)
+
+        # Handle custom positions and orientations
+        obj_init_options = options.get("obj_init_options", {})
+        for i in range(self.num_objects):
+            # Set custom position if provided
+            if f"init_xy_{i}" in obj_init_options:
+                options.setdefault("obj_init_options", {})[f"init_xy_{i}"] = (
+                    obj_init_options[f"init_xy_{i}"]
+                )
+
+            # Set custom orientation if provided
+            if f"orientation_{i}" in obj_init_options:
+                options.setdefault("obj_init_options", {})[f"orientation_{i}"] = (
+                    obj_init_options[f"orientation_{i}"]
+                )
+            elif f"init_rot_quat_{i}" in obj_init_options:
+                options.setdefault("obj_init_options", {})[f"init_rot_quat_{i}"] = (
+                    obj_init_options[f"init_rot_quat_{i}"]
+                )
+
+        return super().reset(seed=seed, options=options)
+
+    def get_language_instruction(self, **kwargs):
+        obj_descriptions = [
+            self._get_instruction_obj_name(obj.name) for obj in self.objects
+        ]
+        if len(obj_descriptions) == 1:
+            task_description = f"pick the {obj_descriptions[0]}"
+        elif len(obj_descriptions) == 2:
+            task_description = (
+                f"pick the {obj_descriptions[0]} and the {obj_descriptions[1]}"
+            )
+        else:
+            task_description = f"pick the {', '.join(obj_descriptions[:-1])}, and the {obj_descriptions[-1]}"
+        return task_description
+
+
+@register_env("PushMultipleDifferentObjectsInScene-v0", max_episode_steps=120)
+class PushMultipleDifferentObjectsInSceneEnv(GraspMultipleCustomOrientationInSceneEnv):
+    def __init__(
+        self,
+        model_ids=[
+            "green_cube_3cm",
+            "yellow_cube_3cm",
+            "yellow_cube_3cm",
+            "green_cube_3cm",
+        ],
+        **kwargs,
+    ):
+        self.custom_model_ids = model_ids
+        super().__init__(num_objects=len(model_ids) if model_ids else 3, **kwargs)
+
+    def reset(self, seed=None, options=None):
+        if options is None:
+            options = dict()
+        options = options.copy()
+
+        # Ensure the episode RNG is set before using it
+        self.set_episode_rng(seed)
+
+        # Use the provided model_ids or the custom_model_ids set during initialization
+        model_ids = options.get("model_ids", self.custom_model_ids)
+        if model_ids is None:
+            raise ValueError(
+                "model_ids must be provided either during initialization or in reset options"
+            )
+
+        options["model_ids"] = model_ids
+        self.num_objects = len(model_ids)
+
+        # Handle custom positions and orientations
+        obj_init_options = options.get("obj_init_options", {})
+        for i in range(self.num_objects):
+            # Set custom position if provided
+            if f"init_xy_{i}" in obj_init_options:
+                options.setdefault("obj_init_options", {})[f"init_xy_{i}"] = (
+                    obj_init_options[f"init_xy_{i}"]
+                )
+
+            # Set custom orientation if provided
+            if f"orientation_{i}" in obj_init_options:
+                options.setdefault("obj_init_options", {})[f"orientation_{i}"] = (
+                    obj_init_options[f"orientation_{i}"]
+                )
+            elif f"init_rot_quat_{i}" in obj_init_options:
+                options.setdefault("obj_init_options", {})[f"init_rot_quat_{i}"] = (
+                    obj_init_options[f"init_rot_quat_{i}"]
+                )
+
+        return super().reset(seed=seed, options=options)
+
+    def get_language_instruction(self, **kwargs):
+        obj_descriptions = [
+            self._get_instruction_obj_name(obj.name) for obj in self.objects
+        ]
+        if len(obj_descriptions) == 1:
+            task_description = f"pick the {obj_descriptions[0]}"
+        elif len(obj_descriptions) == 2:
+            task_description = (
+                f"pick the {obj_descriptions[0]} and the {obj_descriptions[1]}"
+            )
+        else:
+            task_description = f"pick the {', '.join(obj_descriptions[:-1])}, and the {obj_descriptions[-1]}"
         return task_description
